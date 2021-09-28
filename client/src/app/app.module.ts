@@ -12,9 +12,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { FaceScanComponent } from './components/face-scan/face-scan.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 @NgModule({
-  declarations: [AppComponent, WelcomeComponent, FaceScanComponent],
+  declarations: [AppComponent, WelcomeComponent, FaceScanComponent, DashboardComponent],
   imports: [
     BrowserModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),

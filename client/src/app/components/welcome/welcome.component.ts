@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
@@ -7,11 +8,17 @@ import { AuthService } from 'src/app/services/auth/auth.service';
   styleUrls: ['./welcome.component.css'],
 })
 export class WelcomeComponent implements OnInit {
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService, private router: Router) {}
 
-  ngOnInit(): void {}
+  async ngOnInit() {
+    // console.log(await this.auth.isLoggedIn());
+    if ((await this.auth.isLoggedIn()) != null) {
+      this.router.navigateByUrl('dashboard');
+    }
+  }
 
   login() {
     this.auth.googleSignin();
+    this.router.navigateByUrl('dashboard');
   }
 }
