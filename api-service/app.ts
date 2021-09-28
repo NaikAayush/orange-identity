@@ -62,6 +62,8 @@ faceColRef.onSnapshot((colSnapshot) => {
         data.label,
         getF32ArrayArrayFromStringArray(data.descriptors)
       );
+      // console.log("New face: ", faceDescriptors[change.doc.id]);
+      // console.log(Object.values(faceDescriptors));
     }
     if (change.type === "modified") {
       const data = change.doc.data();
@@ -181,6 +183,27 @@ app.post(
     }
 
     res.send(ret);
+  }
+);
+
+app.post(
+  "/api/airport/matchFace",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const rawBody = req.body;
+    const faceData = getF32ArrayArrayFromArrayArray(rawBody.faceData);
+
+    console.log("Got face match request");
+
+    console.log("face descriptors", faceDescriptors.values);
+    const faceMatcher = new faceapi.FaceMatcher(Object.values(faceDescriptors));
+
+    const bestMatch = faceMatcher.findBestMatch(faceData[0]);
+
+    console.log("Got match", bestMatch.toString());
+
+    res.send({
+      "match": bestMatch.toString()
+    })
   }
 );
 
