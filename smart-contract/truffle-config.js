@@ -18,7 +18,11 @@
  *
  */
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+
+// besu development hardcoded key
+// NOT TO BE USED FOR PRODUCTION
+const privateKey = "c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3";
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
@@ -71,6 +75,11 @@ module.exports = {
     // network_id: 2111,   // This network is yours, in the cloud.
     // production: true    // Treats this network as if it was a public net. (default: false)
     // }
+    besu: {
+      provider: () => new HDWalletProvider(privateKey, "http://localhost:8545"),
+      gasPrice: 0,
+      network_id: "*"
+    }
   },
 
   // Set default mocha options here, use special reporters etc.
