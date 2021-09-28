@@ -3,6 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { WebcamModule } from 'ngx-webcam';
 import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFireStorageModule, BUCKET } from '@angular/fire/compat/storage';
 import { environment } from '../environments/environment';
 
@@ -17,6 +19,8 @@ import { FaceScanComponent } from './components/face-scan/face-scan.component';
     BrowserModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireStorageModule,
+    AngularFirestoreModule,
+    AngularFireAuthModule,
     AppRoutingModule,
     WebcamModule,
   ],

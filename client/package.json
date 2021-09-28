@@ -24,17 +24,17 @@
     "browser": "^0.2.6",
     "crypto-browserify": "^3.12.0",
     "face-api.js": "^0.22.2",
+    "firebase": "^9.1.0",
     "https-browserify": "^1.0.0",
     "ngx-webcam": "^0.3.2",
     "os-browserify": "^0.3.0",
+    "rxfire": "^6.0.0",
     "rxjs": "~6.6.0",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "tslib": "^2.3.0",
     "web3": "^1.5.3",
-    "zone.js": "~0.11.4",
-    "firebase": "^9.0.0",
-    "rxfire": "^6.0.0"
+    "zone.js": "~0.11.4"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~12.2.5",
