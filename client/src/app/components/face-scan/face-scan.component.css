@@ -1,0 +1,10 @@
+#snap-wrapper {
+  width: 300px;
+  height: 300px;
+}
+#snap {
+  background: #000;
+  border-radius: 100%;
+  object-fit: cover;
+  height: 300px;
+}

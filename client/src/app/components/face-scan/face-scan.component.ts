@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
-
-// import * as faceapi from 'face-api.js';
-// import { Dimensions } from 'face-api.js';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { FaceService } from 'src/app/services/face/face.service';
 
 @Component({
   selector: 'app-face-scan',
@@ -11,43 +10,25 @@ import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
   styleUrls: ['./face-scan.component.css'],
 })
 export class FaceScanComponent implements OnInit {
-  constructor() {}
+  public clickedStatus: boolean = true;
+  public finalImage: boolean = false;
 
-  // async ngOnInit() {
-  //   // const MODEL_URL = 'assets/weights';
-  //   // await faceapi.loadSsdMobilenetv1Model(MODEL_URL);
-  //   // await faceapi.loadFaceLandmarkModel(MODEL_URL);
-  //   // await faceapi.loadFaceRecognitionModel(MODEL_URL);
-  // }
+  constructor(
+    private storage: AngularFireStorage,
+    private faceService: FaceService
+  ) {}
 
-  // async onClick() {
-  //   console.log('doing');
-  //   const input = document.getElementById('myImage') as any;
-  //   this.drawCanvasImage(input);
-  //   let fullFaceDescriptions = await faceapi
-  //     .detectAllFaces(input)
-  //     .withFaceLandmarks()
-  //     .withFaceDescriptors();
-  //   const x = new Dimensions(input.width, input.height);
-  //   fullFaceDescriptions = faceapi.resizeResults(fullFaceDescriptions, x);
+  async ngOnInit() {
+    WebcamUtil.getAvailableVideoInputs().then(
+      (mediaDevices: MediaDeviceInfo[]) => {
+        this.multipleWebcamsAvailable = mediaDevices && mediaDevices.length > 1;
+      }
+    );
+  }
 
-  //   var canvas = document.getElementById('myCanvas') as any;
-  //   const box =
-  //   const drawBox = faceapi.draw.DrawBox()
-  //   faceapi.draw.drawDetections(canvas, fullFaceDescriptions);
-
-  // }
-
-  // drawCanvasImage(image: any) {
-  //   var canvas = document.getElementById('myCanvas') as any;
-
-  //   canvas.width = image.width;
-  //   canvas.height = image.height;
-
-  //   var context = canvas.getContext('2d') as any;
-
-  //   context.drawImage(image, 0, 0, image.width, image.height);
-  // }
+  async onClick() {
+    console.log('image');
+  }
 
   public showWebcam = true;
   public allowCameraSwitch = true;
@@ -67,14 +48,6 @@ export class FaceScanComponent implements OnInit {
   private nextWebcam: Subject<boolean | string> = new Subject<
     boolean | string
   >();
-
-  public ngOnInit(): void {
-    WebcamUtil.getAvailableVideoInputs().then(
-      (mediaDevices: MediaDeviceInfo[]) => {
-        this.multipleWebcamsAvailable = mediaDevices && mediaDevices.length > 1;
-      }
-    );
-  }
 
   public triggerSnapshot(): void {
     this.trigger.next();
@@ -97,11 +70,8 @@ export class FaceScanComponent implements OnInit {
 
   private imageArray: Array<WebcamImage> = [];
 
-  public handleImage(webcamImage: WebcamImage): void {
-    // console.info('received webcam image', webcamImage);
-    this.imageArray.push(webcamImage);
-    console.log(this.imageArray);
-    // this.webcamImage = webcamImage;
+  public async handleImage(webcamImage: WebcamImage) {
+    this.webcamImage = webcamImage;
   }
 
   public cameraWasSwitched(deviceId: string): void {
@@ -118,6 +88,38 @@ export class FaceScanComponent implements OnInit {
   }
 
   public startScan() {
+    this.clickedStatus = false;
     this.triggerSnapshot();
+  }
+
+  async uploadFile(webcamImage: WebcamImage) {
+    const filePath = 'aaaaa1.jpg';
+    const ref = this.storage.ref(filePath);
+    const task = ref.putString(webcamImage.imageAsBase64, 'base64', {
+      contentType: 'image/jpg',
+    });
+  }
+
+  public clickPhoto() {
+    this.clickedStatus = false;
+    this.finalImage = false;
+    this.triggerSnapshot();
+  }
+
+  public reset() {
+    this.clickedStatus = true;
+    this.finalImage = false;
+  }
+
+  public async continue() {
+    this.clickedStatus = false;
+    this.finalImage = true;
+
+    const image = document.getElementById('snap');
+    console.log('recognize');
+    const res = await this.faceService.recognizeFace(image);
+    console.log('assign');
+    console.log(res);
+    await this.faceService.assignFace('Aayush', [res.descriptor]);
   }
 }
