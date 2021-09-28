@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "orange-identity": {
+      "hosting": {
+        "client": [
+          "orange-identity"
+        ]
+      }
+    }
+  }
+}
