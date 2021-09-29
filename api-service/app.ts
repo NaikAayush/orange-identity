@@ -202,7 +202,10 @@ app.post(
     console.log("Got match", bestMatch.toString());
 
     res.send({
-      "match": bestMatch.toString()
+      "match": {
+        "label": bestMatch.label,
+        "distance": bestMatch.distance
+      }
     })
   }
 );
