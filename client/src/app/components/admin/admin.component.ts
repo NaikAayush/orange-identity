@@ -1,4 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Subject, Observable } from 'rxjs';
+import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { FaceService } from 'src/app/services/face/face.service';
+import { ApiService } from 'src/app/services/api/api.service';
 
 @Component({
   selector: 'app-admin',
@@ -6,10 +11,122 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./admin.component.css']
 })
 export class AdminComponent implements OnInit {
+  public clickedStatus: boolean = true;
+  public finalImage: boolean = false;
 
-  constructor() { }
+  constructor(
+    private storage: AngularFireStorage,
+    private faceService: FaceService,
+    private api: ApiService,
+  ) {}
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    WebcamUtil.getAvailableVideoInputs().then(
+      (mediaDevices: MediaDeviceInfo[]) => {
+        this.multipleWebcamsAvailable = mediaDevices && mediaDevices.length > 1;
+      }
+    );
   }
 
+  async onClick() {
+    console.log('image');
+  }
+
+  public showWebcam = true;
+  public allowCameraSwitch = true;
+  public multipleWebcamsAvailable = false;
+  public videoOptions: MediaTrackConstraints = {
+    // width: {ideal: 1024},
+    // height: {ideal: 576}
+  };
+  public errors: WebcamInitError[] = [];
+
+  // latest snapshot
+  public webcamImage: WebcamImage = null as any;
+
+  // webcam snapshot trigger
+  private trigger: Subject<void> = new Subject<void>();
+  // switch to next / previous / specific webcam; true/false: forward/backwards, string: deviceId
+  private nextWebcam: Subject<boolean | string> = new Subject<
+    boolean | string
+  >();
+
+  public triggerSnapshot(): void {
+    this.trigger.next();
+  }
+
+  public toggleWebcam(): void {
+    this.showWebcam = !this.showWebcam;
+  }
+
+  public handleInitError(error: WebcamInitError): void {
+    this.errors.push(error);
+  }
+
+  public showNextWebcam(directionOrDeviceId: boolean | string): void {
+    // true => move forward through devices
+    // false => move backwards through devices
+    // string => move to device with given deviceId
+    this.nextWebcam.next(directionOrDeviceId);
+  }
+
+  private imageArray: Array<WebcamImage> = [];
+
+  public async handleImage(webcamImage: WebcamImage) {
+    this.webcamImage = webcamImage;
+  }
+
+  public cameraWasSwitched(deviceId: string): void {
+    console.log('active device: ' + deviceId);
+    // this.deviceId = deviceId;
+  }
+
+  public get triggerObservable(): Observable<void> {
+    return this.trigger.asObservable();
+  }
+
+  public get nextWebcamObservable(): Observable<boolean | string> {
+    return this.nextWebcam.asObservable();
+  }
+
+  public startScan() {
+    this.clickedStatus = false;
+    this.triggerSnapshot();
+  }
+
+  async uploadFile(webcamImage: WebcamImage) {
+    const filePath = 'aaaaa1.jpg';
+    const ref = this.storage.ref(filePath);
+    const task = ref.putString(webcamImage.imageAsBase64, 'base64', {
+      contentType: 'image/jpg',
+    });
+  }
+
+  public clickPhoto() {
+    this.clickedStatus = false;
+    this.finalImage = false;
+    this.triggerSnapshot();
+  }
+
+  public reset() {
+    this.clickedStatus = true;
+    this.finalImage = false;
+  }
+
+  public async continue() {
+    this.clickedStatus = false;
+    this.finalImage = true;
+
+    const image = document.getElementById('snap');
+    console.log('recognize');
+    const res = await this.faceService.recognizeFace(image);
+    console.log('assign');
+    console.log(res);
+    // await this.faceService.assignFace('Aayush', [res.descriptor]);
+
+    const response = await this.api.sendPostReq("/api/airport/matchFace", {
+      faceData: [res.descriptor],
+    });
+    console.log("Response from API", response);
+  }
 }
