@@ -18,9 +18,11 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { AddFlightComponent } from './components/add-flight/add-flight.component';
 import { FlightsComponent } from './components/flights/flights.component';
 import { TicketComponent } from './components/ticket/ticket.component';
+import { AdminComponent } from './components/admin/admin.component';
+import { SuccessComponent } from './components/success/success.component';
 
 @NgModule({
-  declarations: [AppComponent, WelcomeComponent, FaceScanComponent, DashboardComponent, PassportComponent, SettingsComponent, AddFlightComponent, FlightsComponent, TicketComponent],
+  declarations: [AppComponent, WelcomeComponent, FaceScanComponent, DashboardComponent, PassportComponent, SettingsComponent, AddFlightComponent, FlightsComponent, TicketComponent, AdminComponent, SuccessComponent],
   imports: [
     BrowserModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
