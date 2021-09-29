@@ -3,6 +3,8 @@ import { Subject, Observable } from 'rxjs';
 import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { FaceService } from 'src/app/services/face/face.service';
+import { ApiService } from 'src/app/services/api/api.service';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-face-scan',
@@ -15,7 +17,9 @@ export class FaceScanComponent implements OnInit {
 
   constructor(
     private storage: AngularFireStorage,
-    private faceService: FaceService
+    private faceService: FaceService,
+    private api: ApiService,
+    private auth: AuthService
   ) {}
 
   async ngOnInit() {
@@ -121,5 +125,11 @@ export class FaceScanComponent implements OnInit {
     console.log('assign');
     console.log(res);
     await this.faceService.assignFace('Aayush', [res.descriptor]);
+
+    const response = await this.api.sendPostReq("/api/customer/addFace", {
+      customerId: await this.auth.getUID(),
+      faceData: [res.descriptor],
+    });
+    console.log("Response from API", response);
   }
 }

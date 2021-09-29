@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
 
 import { WebcamModule } from 'ngx-webcam';
 import { AngularFireModule } from '@angular/fire/compat';
@@ -21,6 +22,7 @@ import { TicketComponent } from './components/ticket/ticket.component';
 import { AdminComponent } from './components/admin/admin.component';
 import { SuccessComponent } from './components/success/success.component';
 
+
 @NgModule({
   declarations: [AppComponent, WelcomeComponent, FaceScanComponent, DashboardComponent, PassportComponent, SettingsComponent, AddFlightComponent, FlightsComponent, TicketComponent, AdminComponent, SuccessComponent],
   imports: [
@@ -31,6 +33,7 @@ import { SuccessComponent } from './components/success/success.component';
     AngularFireAuthModule,
     AppRoutingModule,
     WebcamModule,
+    HttpClientModule,
   ],
   providers: [{ provide: BUCKET, useValue: 'orange-identity.appspot.com' }],
   bootstrap: [AppComponent],

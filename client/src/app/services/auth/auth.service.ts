@@ -75,6 +75,11 @@ export class AuthService {
     return res?.displayName;
   }
 
+  async getUID() {
+    const res = await this.afAuth.authState.pipe(first()).toPromise();
+    return res?.uid;
+  }
+
   async getImage() {
     const res = await this.afAuth.authState.pipe(first()).toPromise();
     return res?.photoURL;
