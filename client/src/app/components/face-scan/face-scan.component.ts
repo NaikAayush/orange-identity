@@ -5,6 +5,7 @@ import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { FaceService } from 'src/app/services/face/face.service';
 import { ApiService } from 'src/app/services/api/api.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-face-scan',
@@ -19,7 +20,8 @@ export class FaceScanComponent implements OnInit {
     private storage: AngularFireStorage,
     private faceService: FaceService,
     private api: ApiService,
-    private auth: AuthService
+    private auth: AuthService,
+    private router: Router
   ) {}
 
   async ngOnInit() {
@@ -126,10 +128,11 @@ export class FaceScanComponent implements OnInit {
     console.log(res);
     await this.faceService.assignFace('Aayush', [res.descriptor]);
 
-    const response = await this.api.sendPostReq("/api/customer/addFace", {
+    const response = await this.api.sendPostReq('/api/customer/addFace', {
       customerId: await this.auth.getUID(),
       faceData: [res.descriptor],
     });
-    console.log("Response from API", response);
+    console.log('Response from API', response);
+    this.router.navigateByUrl('success');
   }
 }
