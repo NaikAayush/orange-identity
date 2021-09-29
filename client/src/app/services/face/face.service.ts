@@ -15,7 +15,7 @@ export class FaceService {
 
   private async init() {
     await faceapi.loadSsdMobilenetv1Model(this.MODEL_URL);
-    await faceapi.loadTinyFaceDetectorModel(this.MODEL_URL);
+    // await faceapi.loadTinyFaceDetectorModel(this.MODEL_URL);
     await faceapi.loadFaceLandmarkModel(this.MODEL_URL);
     await faceapi.loadFaceRecognitionModel(this.MODEL_URL);
   }
