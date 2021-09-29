@@ -69,4 +69,9 @@ export class AuthService {
   async isLoggedIn() {
     return await this.afAuth.authState.pipe(first()).toPromise();
   }
+
+  async getName() {
+    const res = await this.afAuth.authState.pipe(first()).toPromise();
+    return res?.displayName;
+  }
 }
