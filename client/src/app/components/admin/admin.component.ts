@@ -125,7 +125,7 @@ export class AdminComponent implements OnInit {
     // await this.faceService.assignFace('Aayush', [res.descriptor]);
 
     const response = await this.api.sendPostReq("/api/airport/matchFace", {
-      faceData: [res.descriptor],
+      faceData: ([res.descriptor]).map(arr => Array.from(arr)),
     });
     console.log("Response from API", response);
   }

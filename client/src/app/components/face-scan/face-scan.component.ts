@@ -130,7 +130,7 @@ export class FaceScanComponent implements OnInit {
 
     const response = await this.api.sendPostReq('/api/customer/addFace', {
       customerId: await this.auth.getUID(),
-      faceData: [res.descriptor],
+      faceData: ([res.descriptor]).map(arr => Array.from(arr)),
     });
     console.log('Response from API', response);
     this.router.navigateByUrl('success');
