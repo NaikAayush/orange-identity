@@ -111,6 +111,121 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
 });
 
 app.post(
+  "/api/customer/addFace",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const rawBody = req.body;
+    const faceData = getF32ArrayArrayFromArrayArray(rawBody.faceData);
+    const customerId = rawBody.customerId;
+
+    await db
+      .collection("faces")
+      .doc(customerId)
+      .set({
+        label: customerId,
+        descriptors: getArrayFromF32ArrayArray(faceData),
+      });
+
+    res.send({
+      msg: "Added face data",
+    });
+  }
+);
+
+app.post(
+  "/api/customer/addPassport",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const rawBody = req.body;
+    const customerId = rawBody.customerId;
+    const passportNumber = rawBody.passportNumber;
+
+    const docRef = db.collection("users").doc(customerId);
+    const doc = await docRef.get();
+    if (!doc.exists) {
+      await docRef.set({
+        uid: customerId,
+        passportNumber: passportNumber,
+      });
+    } else {
+      await docRef.update({
+        passportNumber: passportNumber,
+      });
+    }
+
+    res.send({
+      msg: "Added passport data",
+    });
+  }
+);
+
+async function addToBlockchain(
+  customerId: string,
+  name: string,
+  passportNumber: string,
+  faceData: Float32Array[]
+) {
+  const tx = contract.methods.addCustomer(
+    customerId,
+    name,
+    passportNumber,
+    JSON.stringify(getArrayFromF32ArrayArray(faceData))
+  );
+
+  const newTx = {
+    from: account.address,
+    to: contractAddress,
+    gas: "0x100000",
+    data: tx.encodeABI(),
+  };
+
+  // console.log("Transaction: ", newTx);
+  const signedTx = await account.signTransaction(newTx);
+  // console.log("signed transaction: ", signedTx.rawTransaction);
+  const result = web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+  // result
+  //   .on("receipt", function (receipt) {
+  //     console.log("Receipt:", receipt);
+  //   })
+  //   .on("error", (err) => {
+  //     console.log("Error calling method", err);
+  //   });
+
+  let ret = {};
+  try {
+    const receipt = await result;
+    console.log("Receipt 2", receipt);
+    ret = {
+      msg: "Added to blockchain successfully",
+    };
+  } catch (err) {
+    console.log("Error calling method", err);
+    ret = {
+      msg: "Error adding to blockchain",
+      error: err,
+    };
+  }
+
+  return ret;
+}
+
+app.post(
+  "/api/customer/addToBlockchain",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const rawBody = req.body;
+    const customerId = rawBody.customerId;
+
+    const docRef = db.collection("users").doc(customerId);
+    const doc = await docRef.get();
+    const data = doc.data();
+
+    const faceData = faceDescriptors[data.uid].descriptors;
+
+    const ret = await addToBlockchain(data.uid, data.displayName, data.passportNumber, faceData);
+
+    res.send(ret);
+  }
+);
+
+app.post(
   "/api/customer/add",
   async (req: Request, res: Response, next: NextFunction) => {
     const rawBody = req.body;
@@ -143,46 +258,12 @@ app.post(
         descriptors: getArrayFromF32ArrayArray(body.faceData),
       });
 
-    const tx = contract.methods.addCustomer(
+    const ret = await addToBlockchain(
       body.customerId,
       body.name,
       body.passportNumber,
-      JSON.stringify(getArrayFromF32ArrayArray(body.faceData))
+      body.faceData
     );
-
-    const newTx = {
-      from: account.address,
-      to: contractAddress,
-      gas: "0x100000",
-      data: tx.encodeABI(),
-    };
-
-    // console.log("Transaction: ", newTx);
-    const signedTx = await account.signTransaction(newTx);
-    // console.log("signed transaction: ", signedTx.rawTransaction);
-    const result = web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-    // result
-    //   .on("receipt", function (receipt) {
-    //     console.log("Receipt:", receipt);
-    //   })
-    //   .on("error", (err) => {
-    //     console.log("Error calling method", err);
-    //   });
-
-    let ret = {};
-    try {
-      const receipt = await result;
-      console.log("Receipt 2", receipt);
-      ret = {
-        msg: "Added customer successfully",
-      };
-    } catch (err) {
-      console.log("Error calling method", err);
-      ret = {
-        msg: "Error adding customer",
-        error: err,
-      };
-    }
 
     res.send(ret);
   }
@@ -204,11 +285,11 @@ app.post(
     console.log("Got match", bestMatch.toString());
 
     res.send({
-      "match": {
-        "label": bestMatch.label,
-        "distance": bestMatch.distance
-      }
-    })
+      match: {
+        label: bestMatch.label,
+        distance: bestMatch.distance,
+      },
+    });
   }
 );
 
