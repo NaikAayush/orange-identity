@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
+import cors from "cors";
 import Web3 from "web3";
 import dotenv from "dotenv";
 import * as admin from "firebase-admin";
@@ -18,6 +19,7 @@ const app = express();
 const port = 3001;
 // middle wares
 app.use(express.json());
+app.use(cors());
 
 // firebase init
 dotenv.config();
