@@ -1,21 +1,19 @@
 <div class="max-w-sm w-96 bg-white flex flex-col h-screen justify-between">
     <!-- Header -->
-    <div class="flex flex-col w-full h-32 p-8">
+    <div class="flex flex-row w-full h-32 p-8  items-center">
+        <button routerLink="/flights" class="font-bold text-2xl ">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <div class="font-bold text-2xl text-center">
-            Flights
+            Flight Details
         </div>
     </div>
     <!-- Body -->
-    <div class="flex flex-col w-full bg-white justify-center items-center flex-grow pb-20">
-        <button>
-            <img routerLink="/ticket" src="assets/flights/flight1.png" alt="">
-        </button>
-        <button>
-            <img routerLink="/ticket" src="assets/flights/flight2.png" alt="">
-        </button>
-        <button>
-            <img routerLink="/ticket" src="assets/flights/flight3.png" alt="">
-        </button>
+    <div class="flex flex-col w-fulljustify-center items-center flex-grow pb-20">
+        <img src="assets/ticket/ticket.svg" alt="">
     </div>
     <!-- Footer -->
     <div class="max-w-sm flex flex-row flex-wrap h-20 w-screen content-between justify-around bg-custom-100 text-custom-200 fixed bottom-0">

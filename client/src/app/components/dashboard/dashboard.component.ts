@@ -8,9 +8,11 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 })
 export class DashboardComponent implements OnInit {
   name: any;
-  constructor(private auth: AuthService) {}
+  imagePath: any;
+  constructor(public auth: AuthService) {}
 
   async ngOnInit() {
     this.name = await this.auth.getName();
+    this.imagePath = await this.auth.getImage();
   }
 }

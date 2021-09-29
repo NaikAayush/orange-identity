@@ -6,6 +6,7 @@ import { FaceScanComponent } from './components/face-scan/face-scan.component';
 import { FlightsComponent } from './components/flights/flights.component';
 import { PassportComponent } from './components/passport/passport.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { TicketComponent } from './components/ticket/ticket.component';
 import { WelcomeComponent } from './components/welcome/welcome.component';
 
 const routes: Routes = [
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'passport', component: PassportComponent },
   { path: 'flights', component: FlightsComponent },
   { path: 'flights/add', component: AddFlightComponent },
+  { path: 'ticket', component: TicketComponent },
   { path: 'settings', component: SettingsComponent },
 ];
 

@@ -17,9 +17,10 @@ import { PassportComponent } from './components/passport/passport.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { AddFlightComponent } from './components/add-flight/add-flight.component';
 import { FlightsComponent } from './components/flights/flights.component';
+import { TicketComponent } from './components/ticket/ticket.component';
 
 @NgModule({
-  declarations: [AppComponent, WelcomeComponent, FaceScanComponent, DashboardComponent, PassportComponent, SettingsComponent, AddFlightComponent, FlightsComponent],
+  declarations: [AppComponent, WelcomeComponent, FaceScanComponent, DashboardComponent, PassportComponent, SettingsComponent, AddFlightComponent, FlightsComponent, TicketComponent],
   imports: [
     BrowserModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
