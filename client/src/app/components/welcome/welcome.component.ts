@@ -12,13 +12,14 @@ export class WelcomeComponent implements OnInit {
 
   async ngOnInit() {
     // console.log(await this.auth.isLoggedIn());
-    if ((await this.auth.isLoggedIn()) != null) {
+    const status = await this.auth.isLoggedIn();
+    if (status != null) {
       this.router.navigateByUrl('dashboard');
     }
   }
 
-  login() {
-    this.auth.googleSignin();
+  async login() {
+    await this.auth.googleSignin();
     this.router.navigateByUrl('dashboard');
   }
 }
