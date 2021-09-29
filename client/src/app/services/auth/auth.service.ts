@@ -13,6 +13,7 @@ import {
 
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -63,5 +64,19 @@ export class AuthService {
   async signOut() {
     await this.afAuth.signOut();
     this.router.navigate(['/']);
+  }
+
+  async isLoggedIn() {
+    return await this.afAuth.authState.pipe(first()).toPromise();
+  }
+
+  async getName() {
+    const res = await this.afAuth.authState.pipe(first()).toPromise();
+    return res?.displayName;
+  }
+
+  async getImage() {
+    const res = await this.afAuth.authState.pipe(first()).toPromise();
+    return res?.photoURL;
   }
 }

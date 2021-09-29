@@ -3,6 +3,12 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  background: #000;
+  display: flex;
+  justify-content: center;
+}
+
 * {
   font-family: "Nunito", sans-serif !important;
 }
